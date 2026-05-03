@@ -252,7 +252,7 @@
 
   <script>
     const repository = "Swelm689/sadsadadadq";
-    const apiUrl = https://api.github.com/repos//releases/latest;
+    const apiUrl = "https://api.github.com/repos/" + repository + "/releases/latest";
     const fallbackRelease = {
       tag_name: "v0.0.20",
       html_url: "https://github.com/Swelm689/sadsadadadq/releases/tag/v0.0.20",
@@ -264,7 +264,7 @@
 
     const formatSize = (bytes) => {
       if (!Number.isFinite(bytes) || bytes <= 0) return "size unavailable";
-      return ${(bytes / 1024 / 1024).toFixed(1)} MB;
+      return (bytes / 1024 / 1024).toFixed(1) + " MB";
     };
 
     const findAsset = (assets, checks) => assets.find((asset) => {
@@ -278,13 +278,13 @@
       if (!asset) {
         button.removeAttribute("href");
         button.setAttribute("aria-disabled", "true");
-        meta.textContent = ${label} is not available in the latest release.;
+        meta.textContent = label + " is not available in the latest release.";
         return;
       }
 
       button.href = asset.browser_download_url;
       button.removeAttribute("aria-disabled");
-      meta.textContent = ${asset.name} - ;
+      meta.textContent = asset.name + " - " + formatSize(asset.size);
     };
 
     const renderRelease = (release, fallbackUsed = false) => {
@@ -293,8 +293,8 @@
       const mac = findAsset(assets, ["arm64", ".dmg"]);
 
       document.getElementById("version").textContent = release.tag_name || "latest";
-      document.getElementById("release-link").href = release.html_url || https://github.com//releases/latest;
-      document.getElementById("asset-count").textContent = ${assets.length} release files published.;
+      document.getElementById("release-link").href = release.html_url || ("https://github.com/" + repository + "/releases/latest");
+      document.getElementById("asset-count").textContent = assets.length + " release files published.";
       document.getElementById("release-state").textContent = fallbackUsed
         ? "Showing last verified links; refresh to retry latest release lookup."
         : "Using latest release links.";
@@ -307,7 +307,7 @@
 
     fetch(apiUrl, { headers: { Accept: "application/vnd.github+json" } })
       .then((response) => {
-        if (!response.ok) throw new Error(GitHub returned );
+        if (!response.ok) throw new Error("GitHub returned " + response.status);
         return response.json();
       })
       .then((release) => renderRelease(release, false))
